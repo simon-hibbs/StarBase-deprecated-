@@ -1,0 +1,3 @@
+Base directory for variant rules sets.
+Each subdirectory contains an optional rules set that can be selected for new projects.
+The minimum requirement for a rules set is a python script Rules.py but the directory may also contain any other scripts or resources the Rules.py script requires.
