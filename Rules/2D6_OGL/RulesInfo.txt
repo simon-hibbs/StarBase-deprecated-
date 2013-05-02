@@ -1,1 +1,0 @@
-A 2D6 OGL compatible SF RPG rules file for StarBase.

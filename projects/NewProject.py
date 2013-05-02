@@ -17,7 +17,7 @@ class RulesInfo(object):
     def __init__(self):
         self.name = None
         self.description = None
-        self.rules_path = None
+        self.rules_template = None
 
 class SizeWidget(QSpinBox):
     def __init__(self, parent=None):
@@ -105,7 +105,7 @@ class NewProjectDialog(QDialog):
 
     def updateRulesSelected(self, index):
         self.project_info.rules_info = self.rulesList[index]
-        self.rulesDescriptionBox.setText(self.project_info.rules.description)
+        self.rulesDescriptionBox.setText(self.project_info.rules_info.description)
 
 
     def getProjectInfo(self):

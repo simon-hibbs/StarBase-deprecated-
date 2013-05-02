@@ -1,1 +1,0 @@
-A basic, default rules file for StarBase designed as a simple starting point for implementing custom rules sets.

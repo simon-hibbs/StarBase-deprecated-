@@ -148,10 +148,11 @@ class WorldModel(QAbstractTableModel):
                 debug_log('Using default WorldNames.txt file with ' + str(len(self.world_name_list)) + ' names')
 
         # Load Rulse.py from project file if it exists, otherwise load default rules file
-        if os.path.isfile(os.path.join(self.project_path ,  'Rules.py')):
+        rules_path = os.path.join(self.project_path, 'Rules')
+        if os.path.isfile(os.path.join(rules_path,  'Rules.py')):
             debug_log('Using project rules file')
-            if  self.project_path not in sys.path:
-                sys.path.insert(0, self.project_path)
+            if  rules_path not in sys.path:
+                sys.path.insert(-1, rules_path)
                 import Rules
         else:
             from model import StandardRules as Rules
@@ -1301,7 +1302,7 @@ class WorldModel(QAbstractTableModel):
 
 
 
-    def createNewProject(self, width=2, height=2, project_path=None, rules_path=None):
+    def createNewProject(self, width=2, height=2, project_path=None):
         sectors = 'Sector Name,Column,Row\n'
         subsectors = 'Subsector Name,Column,Row\n'
         worlds = ''
@@ -1351,7 +1352,7 @@ class WorldModel(QAbstractTableModel):
         sbconf.set('Options', 'codedlabels', str(self.codedLabels))
 
         with open(os.path.join(project_path, 'starbase.ini'), 'w') as starbase_file:
-            sbconf.write(starbase_file)   
+            sbconf.write(starbase_file)
 
         project_name = os.path.split(project_path)[-1]
         return project_name

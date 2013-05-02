@@ -3,7 +3,7 @@
 #sip.setapi('QString', 2)
 #sip.setapi('QVariant', 2)
 
-import sys, os, imp
+import sys, os, shutil, imp
 from PySide.QtCore import *
 from PySide.QtGui import *
 from log import *
@@ -107,6 +107,7 @@ class ProjectManager(QDialog):
             #new_project_dialog.deleteLater()
 
             if project_info is not None:
+                info_log('Project manager is creating the project directory.')
                 project_path = os.path.join(self.projectsDir, project_info.name)
 
                 if os.path.exists(project_path):
@@ -116,12 +117,16 @@ class ProjectManager(QDialog):
                         return False
                 else:
                     os.mkdir(project_path)
-                rules_path = project_info.rules_info.rules_path
-                debug_log('Creating new project in directory ' + project_path)
+
+                info_log('Project manager is creating the rules directory.')
+                rules_template = project_info.rules_info.rules_template
+                project_rules_directory = os.path.join(project_path, 'Rules')
+                shutil.copytree(rules_template, project_rules_directory)
+                
+                debug_log('Initialising new project in directory ' + project_path)
                 project_name = self.model.createNewProject(project_info.width,
                                                            project_info.height,
-                                                           project_path,
-                                                           rules_path)
+                                                           project_path)
 
                 self.addProject(project_info)
         
@@ -156,12 +161,12 @@ class ProjectManager(QDialog):
 
     # Checks the Rules directory for saubdirectories containing a Rules.py file
     # and put into about them into self.rulesList
-    def loadRulesList(self, rules_path):
-        if not os.path.isdir(rules_path):
-            info_log('ProjectManager: Error accessing the Rules directory: ' + rules_path)
+    def loadRulesList(self, rules_template):
+        if not os.path.isdir(rules_template):
+            info_log('ProjectManager: Error accessing the Rules directory: ' + rules_template)
             sys.exit(0)
         else:
-            self.rulesDir = rules_path
+            self.rulesDir = rules_template
             dir_list = os.listdir(self.rulesDir)
 
             for entry in dir_list:
@@ -183,7 +188,7 @@ class ProjectManager(QDialog):
                         rules_info = RulesInfo()
                         rules_info.name = entry
                         rules_info.description = description
-                        rules_info.rules_path = check_path
+                        rules_info.rules_template = check_path
                         self.rulesList.append(rules_info)
 
                     else:
@@ -253,19 +258,19 @@ class ProjectManager(QDialog):
 
         self.setProjectsDirectory(project_directory_path)
 
-        self.rules_directory_path = self.config.get('Rules', 'rules_directory_path')
-        if not os.path.isdir(self.rules_directory_path):
-            info_log('Rules directory: ' + self.rules_directory_path + ' Does not exist. Setting to default.')
+        self.rules_templates_path = self.config.get('Rules', 'rules_templates_path')
+        if not os.path.isdir(self.rules_templates_path):
+            info_log('Rules directory: ' + self.rules_templates_path + ' Does not exist. Setting to default.')
             
-            self.rules_directory_path = os.path.join(os.getcwd(), 'Rules')
-            info_log('Setting rules directory to ' + self.rules_directory_path)
+            self.rules_templates_path = os.path.join(os.getcwd(), 'Rules')
+            info_log('Setting rules directory to ' + self.rules_templates_path)
             
-            if not os.path.isdir(self.rules_directory_path):
-                info_log('Rules directory: ' + self.rules_directory_path + ' Does not exist')
+            if not os.path.isdir(self.rules_templates_path):
+                info_log('Rules directory: ' + self.rules_templates_path + ' Does not exist')
                 info_log('ERROR: A rules directory could not be found. Creating a new project will fail!')
         
-        info_log('Rules directory: ' + str(self.rules_directory_path))
-        self.loadRulesList(self.rules_directory_path)
+        info_log('Rules directory: ' + str(self.rules_templates_path))
+        self.loadRulesList(self.rules_templates_path)
 
 
     def writeProjectsFile(self):
