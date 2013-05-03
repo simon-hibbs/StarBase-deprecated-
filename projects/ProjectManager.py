@@ -262,7 +262,7 @@ class ProjectManager(QDialog):
         if not os.path.isdir(self.rules_templates_path):
             info_log('Rules directory: ' + self.rules_templates_path + ' Does not exist. Setting to default.')
             
-            self.rules_templates_path = os.path.join(os.getcwd(), 'Rules')
+            self.rules_templates_path = os.path.join(os.getcwd(), 'rules_templates')
             info_log('Setting rules directory to ' + self.rules_templates_path)
             
             if not os.path.isdir(self.rules_templates_path):
@@ -280,6 +280,9 @@ class ProjectManager(QDialog):
         self.config.add_section('Projects')
         self.config.set('Projects', 'project_directory_path', self.projectsDir)
         self.config.set('Projects', 'default_project', str(self.default_project))
+
+        self.config.add_section('Rules')
+        self.config.set('Rules', 'rules_templates_path', self.rules_templates_path)
 
         with open('projects.ini', 'wb') as projects_file:
             self.config.write(projects_file)

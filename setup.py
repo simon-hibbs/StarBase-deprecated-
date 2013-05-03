@@ -19,5 +19,12 @@ setup(name='StarBase',
       scripts=['log.py'],
       dll_excludes=[ 'mswsock.dll', 'powrprof.dll' ],
       data_files=[('', ['projects.ini',
-                        'StandardRules.py',
-                        'WorldNames.txt'])])
+                        'WorldNames.txt']),
+                  ('rules_templates', ['rules_templates\\Info.txt',]),
+                  ('rules_templates\\2D6_OGL', ['rules_templates\\2D6_OGL\\OGL_License.txt',
+                                                'rules_templates\\2D6_OGL\\Rules.py',
+                                                'rules_templates\\2D6_OGL\\D6_OGL.py',
+                                                'rules_templates\\2D6_OGL\\RulesInfo.txt']),
+                  ('rules_templates\\default', ['rules_templates\\default\\Rules.py',
+                                                'rules_templates\\default\\RulesInfo.txt'])]
+      )
