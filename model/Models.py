@@ -606,6 +606,7 @@ class WorldModel(QAbstractTableModel):
             #debug_log('Model: rollToPopulate False = ' + str(roll))
             return False
 
+
     def insertRandomWorld(self, row):
         #self.insertRow(row)
         #debug_log('Model: Inserting random world at row ' + str(row))
@@ -623,9 +624,7 @@ class WorldModel(QAbstractTableModel):
         codes, descriptions = self.generateWorld()
         if len(codes) != len(descriptions):
             debug_log('Critical error in worlds model - description and codes lists from rules are different lengths!')
-        print "Reconfiguring world row:", row, " codes:", codes 
         self.worlds[row].reconfigure(codes)
-        print "New world attributes:", self.worlds[row].attributes
 
         for (index, text) in enumerate(descriptions):
             if text != '' and text != self.attributeDefinitions[index].description(codes[index]):
@@ -645,6 +644,23 @@ class WorldModel(QAbstractTableModel):
             debug_log('World Model: Disabling auto-name')
             self.auto_name = False
 
+    def createWorldName(self, salt):
+        if len(self.world_name_list) > 0:
+            name_number = random.randint(0, (len(self.world_name_list) - 1))
+            name = self.world_name_list.pop(name_number).rstrip()
+
+            if salt and len(name) < 8:
+                limit = 15 - len(name)
+                d20 = random.randint(1, 20)
+                if d20 <= 2:
+                    name = 'New ' + name
+                elif 2 <= d20 <= limit:
+                    suffix = random.choice([' Prime', ' Prime', ' Alpha', ' Alpha',
+                                            ' Beta', ' Gamma', ' Delta', ' Minor',
+                                            ' Majoris', ' II', ' II', ' III', ' III',
+                                            ' IV', ' IV', ' V', ' V', ' VI', ' IX'])
+                    name = name + suffix
+        return name
 
     def hasWorldAtXY(self, x, y):
         answer = False
@@ -910,7 +926,6 @@ class WorldModel(QAbstractTableModel):
 
             elif column >= ATTRIBUTE_BASE:
                 attribute_index = column - ATTRIBUTE_BASE
-                print 'Column: ', column, 'attribute_index: ', attribute_index
 
                 if role == DESCRIPTION_ROLE:
                     if value != self.attributeDefinitions[attribute_index].description(world.attributes[attribute_index]):
@@ -975,10 +990,14 @@ class WorldModel(QAbstractTableModel):
         col = current_xy[0]
         row = current_xy[1]
 
-        if self.auto_name and len(self.world_name_list) > 0:
-            name_number = random.randint(0, (len(self.world_name_list) - 1))
-            name = self.world_name_list.pop(name_number)
+        #if self.auto_name and len(self.world_name_list) > 0:
+        #    name_number = random.randint(0, (len(self.world_name_list) - 1))
+        #    name = self.world_name_list.pop(name_number)
+        if self.auto_name:
+            name = self.createWorldName(True)
         else:
+            if len(self.world_name_list) == 0:
+                debug_log('Models.insertRows: Run out of world names!')
             name = str(col + 500).zfill(3) + ':' + str(row + 500).zfill(3)
         
         for world in self.worlds:
@@ -1132,13 +1151,11 @@ class WorldModel(QAbstractTableModel):
 ##                    )
                 #Check there are enough attributes      #####
                 if len(world.attributes) < len(self.attributeDefinitions):
-                    print "World ", world.name, "has too few attributes"
-                    print "Undefined attributes will default to code '0'"
+                    debug_log("World " + world.name + "has too few attributes")
+                    debug_log("Undefined attributes will default to code '0'")
                     names = ''
                     for definition in self.attributeDefinitions:
                         names += definition.name + ' '
-                    print names
-                    print world.attributes
 
                 #world.recalculateTradeCodes()
                 self.worlds.append(world)
