@@ -45,7 +45,7 @@ Kronstadt
 Preyashah
 Sarkisian
 Toussaint
-New Io
+Io
 Mang
 Pikulia
 Leifer
@@ -70,7 +70,7 @@ Cowenbrown
 Gerbefremov
 Glass
 Monroe
-Jim
+Jip
 Xizezong
 Boole
 Nephele
@@ -188,7 +188,7 @@ Brubrew
 Valeria
 Desnoux
 Migirenko
-van der Woude
+Van Der Woude
 Miyauchi
 Taiwan
 Pang
@@ -1943,7 +1943,7 @@ Dobrovsky
 Halverson
 Isnello
 Adriana
-Newburn
+Highburn
 Linnaeus
 Giono
 Sundre
@@ -3346,7 +3346,7 @@ Yaroshenko
 Keldysh
 Hironaka
 Nussbaum
-Newell
+Virell
 Stravinsky
 Leonce
 Heracles
@@ -4577,7 +4577,7 @@ Noniearora
 Nucciomula
 Riccati
 Sachs
-Newberry
+Farburry
 Kendriddle
 Gamalski
 Yamanaka
@@ -6631,7 +6631,7 @@ Lindeman
 Tator
 Wenchuan
 Delbruck
-DNA
+Drodus
 Schwaar
 Ducrosa
 Sakaguchi
@@ -6667,7 +6667,7 @@ Bakharev
 Tugela
 Bethellen
 van der Pol
-ARLT
+Arlint
 Boda
 Stebrehmer
 Giliberti
@@ -6998,7 +6998,7 @@ Mokshagundam
 Delportia
 Bleuler
 Uppsala
-Newton
+Highton
 Sanenobu
 Lupishko
 Bryce Canyon
@@ -7787,7 +7787,7 @@ Jarre
 Lochner
 Blondelet
 Salonta
-New Washington
+Washington
 Gallaj
 Papike
 Thule
@@ -8117,7 +8117,7 @@ Strazzulla
 Prestinenza
 Pimdouglas
 Lauretta
-Newman
+Freeman
 Shanpalli
 Lewicki
 Muinonen
@@ -8241,7 +8241,7 @@ Aferrari
 Garrison
 Anhui
 Mortensen
-Aedouglass
+Aedoria
 Kagesuke
 Torvalds
 Klet
@@ -8581,7 +8581,7 @@ Seneferu
 Martynov
 Ardee
 Legault
-von Klitzing
+Von Klitzing
 Kamenny
 Gibbon
 Anneraugh
@@ -9450,7 +9450,7 @@ Ametkhan
 Takoyaki
 Mrkos
 Stradonice
-Newtonia
+Jiptonia
 Hamatonbetsu
 Kreusa
 Protos
@@ -9667,7 +9667,7 @@ Bonnielei
 Sweelinck
 Mendel
 Vigo
-Sy
+Sygnol
 Montigiani
 Romulus
 Hergiani
@@ -10699,7 +10699,7 @@ Yugoslavia
 Pittichova
 Transvaalia
 Lucidor
-van der Meer
+Van Der Meer
 Ruby
 Ashitaka
 Seira
@@ -10900,7 +10900,7 @@ Ariane
 Pushkin
 Sumaura
 Ginevra
-Newcombia
+Precombia
 Frankenwald
 Korolev
 Pogorelov
@@ -11322,7 +11322,7 @@ Duponta
 Frobenius
 Dzhanibekov
 Enid
-Newberg
+Freiberg
 Kenna
 Knysna
 Rutha
@@ -12707,7 +12707,7 @@ Klausheide
 Aphrodite
 Sabauda
 Ostankino
-Ybl
+Yanbol
 Ruslanova
 Subinmin
 Panevezys
@@ -14203,7 +14203,7 @@ Kiruna
 Balears
 Joella
 Smithsonian
-COBE
+Cobe
 Klumpkea
 Harper
 Mentha
@@ -15151,7 +15151,7 @@ Napinna
 Nangoo
 Nelvanis
 Nervuson
-Newpar
+Vipar
 Nessikus
 Norricum
 Nebulon

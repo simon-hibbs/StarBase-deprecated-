@@ -660,6 +660,7 @@ class WorldModel(QAbstractTableModel):
                                             ' Majoris', ' II', ' II', ' III', ' III',
                                             ' IV', ' IV', ' V', ' V', ' VI', ' IX'])
                     name = name + suffix
+
         return name
 
     def hasWorldAtXY(self, x, y):

@@ -318,7 +318,7 @@ law_level_data = \
                 'Psionics: Dangerous talents must be registered.'},
           "2": {"Label": "Few restrictions",
                 'Description' : 'Weapons: Portable energy weapons (except ' +
-                'ship-mounted weapons.\n' + 
+                'ship-mounted weapons).\n' + 
                 'Drugs: Highly addictive narcotics.\n' +
                 'Information: Agent programs.\n' +
                 'Technology: Alien technology.\n' +

@@ -2,9 +2,12 @@
 # 2D6 OGL compatible rules file
 # The entirety if this file is designated as Open Content.
 # Refer to the file OGL_License.txt for details
-from model import Foundation
+#
+# Deprecated - remove
+#from model import Foundation
+#from log import *
+
 import random
-from log import *
 
 from D6_OGL import *
 
@@ -324,11 +327,11 @@ def generateWorld():
     base = ''
     stellar = ''
 
-    system_text = "Bases: \t" + base + "\n" +\
-                  "Trade: \t" + trade_codes + "\n" +\
-                  "Asteroids: \t" + str(AB) + "\n" +\
-                  "Gas Giant(s):\t" + str(GG) + "\n" +\
-                  "Star Data:\t" + stellar + "\n"
+    system_text = "Bases:".ljust(15) + base + "\n" +\
+                  "Trade:".ljust(15) + trade_codes + "\n" +\
+                  "Asteroids:".ljust(15) + str(AB) + "\n" +\
+                  "Gas Giant(s):".ljust(15) + str(GG) + "\n" +\
+                  "Star Data:".ljust(15) + stellar + "\n"
 
 
     # Building the list of generated stats to return to the application 
@@ -352,4 +355,41 @@ def generateWorld():
     return (stats, descriptions)
 
 
-                                 
+if __name__ == '__main__':
+    world_stats, world_descriptions = generateWorld()
+    report='World Name:\n'
+    report += 'Allegiance:\n'
+    report += 'Starport:'.ljust(15) + world_stats[0] + '\t' + starport_data["Code Data"][world_stats[0]]["Label"] + '\n'
+    report += 'Size:'.ljust(15) + world_stats[1] + '\t' + size_data["Code Data"][world_stats[1]]["Label"] + '\n'
+    report += 'Atmosphere:'.ljust(15) + world_stats[2] + '\t' + atmosphere_data["Code Data"][world_stats[2]]["Label"] + '\n'
+    report += 'Hydrographics:'.ljust(15) + world_stats[3] + '\t' + hydrographic_data["Code Data"][world_stats[3]]["Label"] + '\n'
+    report += 'Population:'.ljust(15) + world_stats[4] + '\t' + population_data["Code Data"][world_stats[4]]["Label"] + '\n'
+    report += 'Government:'.ljust(15) + world_stats[5] + '\t' + government_data["Code Data"][world_stats[5]]["Label"] + '\n'
+    report += 'Law Level:'.ljust(15) + world_stats[6] + '\t' + law_level_data["Code Data"][world_stats[6]]["Label"] + '\n'
+    report += 'Tech Level:'.ljust(15) + world_stats[7] + '\t' + tech_level_data["Code Data"][world_stats[7]]["Label"] + '\n\n'
+    report += 'System Data' + '\n'
+    report += world_descriptions[8] + '\n'
+    report += 'Starport\n'
+    report += starport_data["Code Data"][world_stats[0]]["Description"] + '\n\n'
+    report += 'Size\n'
+    report += size_data["Code Data"][world_stats[1]]["Description"] + '\n\n'
+    report += 'Atmosphere\n'
+    report += atmosphere_data["Code Data"][world_stats[2]]["Description"] + '\n\n'
+    report += 'Hydrographics\n'
+    report += hydrographic_data["Code Data"][world_stats[3]]["Description"] + '\n\n'
+    report += 'Population\n'
+    report += population_data["Code Data"][world_stats[4]]["Description"] + '\n\n'
+    report += 'Government\n'
+    report += government_data["Code Data"][world_stats[5]]["Description"] + '\n\n'
+    report += 'Law Level\n'
+    report += law_level_data["Code Data"][world_stats[6]]["Description"] + '\n\n'
+    report += 'Tech Level\n'
+    report += tech_level_data["Code Data"][world_stats[7]]["Description"] + '\n\n'
+
+    import sys
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], 'wb') as f:
+            f.write(report)
+    else:
+        print report
+    
