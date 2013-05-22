@@ -63,15 +63,12 @@ attributeDefinitions = [starport_data,
                         tech_level_data,
                         system_data]
 
-# The App calls this function to obtain stats when a world is first created,
-# or is re-generated. This is a very basic implementation that just randomises
-# each attribute. A simpleset of modifiers is applied to the 'Biosphere'
-# attribute for demonstration purposes.
+
 # The function returns a list of attribute codes, which match the attributes
 # in the attributeDefinitions list. The two lists must be the same length and
 # the attribute definitions must contain definitions for the codes returned
 # by this function.
-def generateWorld():
+def getWorldStats():
     
     dm = 0
 
@@ -82,16 +79,6 @@ def generateWorld():
         elif number > 5: number = 5
         
         return codes[number]
-
-    if (d6() + d6()) >= 10:
-        gas_giant = False
-    else:
-        gas_giant = True
-
-    if (d6() + d6()) >= 8:
-        belts = False
-    else:
-        belts = True
 
     #Starport
     port_roll = d6() + d6()
@@ -191,6 +178,26 @@ def generateWorld():
     # but the description text is generated
     system_data='0'
 
+
+    # Building the list of generated stats to return to the application 
+    stats = [starport, size, atmosphere, hydrographics, population, 
+           government, law_level, tech_level, system_data]
+
+
+    
+    # Both returned parameters must be lists, NOT tupples
+    return stats
+
+
+# This function returns a list of attribute descriptions. This alloows for
+# custom description generation for each attribute, perhaps based on the
+# values of other attributes. In this implementation, trade codes are
+# generated based on the values of various attributes.
+# Individual descriptions may be empty dtrings, inwhich case the application
+# uses the default description from the attribute definition.
+def getWorldDescriptions(world_stats):
+
+    starport, size, atmosphere, hydrographics, population, government, law_level, tech_level, system_data = world_stats
 
     # Trade code generation
     trade_list = []
@@ -314,6 +321,18 @@ def generateWorld():
 
     trade_codes = ' '.join(trade_list)
 
+
+    if (d6() + d6()) >= 10:
+        gas_giant = False
+    else:
+        gas_giant = True
+
+    if (d6() + d6()) >= 8:
+        belts = False
+    else:
+        belts = True
+
+
     if gas_giant:
         GG = 'Yes'
     else:
@@ -334,11 +353,6 @@ def generateWorld():
                   "Star Data:".ljust(15) + stellar + "\n"
 
 
-    # Building the list of generated stats to return to the application 
-    stats = [starport, size, atmosphere, hydrographics, population, 
-           government, law_level, tech_level, system_data]
-
-    # You also need to return any customised text to go with the attributes.
     # If you want to use the default text for an attribute, just leave the
     # string empty.
     descriptions = ['',
@@ -350,13 +364,14 @@ def generateWorld():
                     '',
                     '',
                     system_text]
-    
-    # Both returned parameters must be lists, NOT tupples
-    return (stats, descriptions)
+
+    return descriptions
+
 
 
 if __name__ == '__main__':
-    world_stats, world_descriptions = generateWorld()
+    world_stats = getWorldStats()
+    world_descriptions = getWorldDescriptions(world_stats)
     report='World Name:\n'
     report += 'Allegiance:\n'
     report += 'Starport:'.ljust(15) + world_stats[0] + '\t' + starport_data["Code Data"][world_stats[0]]["Label"] + '\n'

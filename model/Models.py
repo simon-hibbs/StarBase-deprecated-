@@ -159,7 +159,8 @@ class WorldModel(QAbstractTableModel):
 
         Rules.project_path = project_path
 
-        self.generateWorld = Rules.generateWorld
+        self.getWorldStats = Rules.getWorldStats
+        self.getWorldDescriptions = Rules.getWorldDescriptions
 
         self.attributeDefinitions = []
         for definition in Rules.attributeDefinitions:
@@ -621,7 +622,8 @@ class WorldModel(QAbstractTableModel):
         modelIndex2 = self.index(row, self.lastColumn)
 
         # self.generateWorld is a reference to Rules.generateWorld
-        codes, descriptions = self.generateWorld()
+        codes = self.getWorldStats()
+        descriptions = self.getWorldDescriptions(codes)
         if len(codes) != len(descriptions):
             debug_log('Critical error in worlds model - description and codes lists from rules are different lengths!')
         self.worlds[row].reconfigure(codes)

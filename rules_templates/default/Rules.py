@@ -354,7 +354,7 @@ attributeDefinitions = [atmo_data,
 # in the attributeDefinitions list. The two lists must be the same length and
 # the attribute definitions must contain definitions for the codes returned
 # by this function.
-def generateWorld():
+def getWorldStats():
     
     dm = 0
 
@@ -411,6 +411,20 @@ def generateWorld():
              cult,
              tech]
 
+
+    # Both returned parameters must be lists, NOT tupples
+    return codes
+
+
+# This function returns a list of attribute descriptions. This alloows for
+# custom description generation for each attribute, perhaps based on the
+# values of other attributes.
+# Individual descriptions may be empty dtrings, inwhich case the application
+# uses the default description from the attribute definition.
+def getWorldDescriptions(world_stats):
+
+    atm, hyd, tmp, res, bio, pop, cult, tech = world_stats
+
     # You also need to return any customised text to go with the attributes.
     # If you want to use the default text for an attribute, just leave the
     # string empty.
@@ -422,8 +436,6 @@ def generateWorld():
                     '',
                     '',
                     '']
-    # Both returned parameters must be lists, NOT tupples
-    return (codes, descriptions)
 
-
-                                 
+    return descriptions
+                       
