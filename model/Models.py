@@ -114,8 +114,6 @@ class WorldModel(QAbstractTableModel):
 
         self.codedLabels = True
 
-        self.generateWorld = None     # Placeholder to import generator into
-
         #The following is a placeholder and is actualy initialised by
         #refreshWorldGeneratorsCombo in the main starbase.py script
         #so that the combo is correctly populated.
@@ -159,8 +157,12 @@ class WorldModel(QAbstractTableModel):
 
         Rules.project_path = project_path
 
-        self.getWorldStats = Rules.getWorldStats
-        self.getWorldDescriptions = Rules.getWorldDescriptions
+        # Try new world generation, if that doesn't work fall back to the old way
+        try:
+            self.getWorldStats = Rules.getWorldStats
+            self.getWorldDescriptions = Rules.getWorldDescriptions
+        except:
+            self.generateWorld = Rules.generateWorld
 
         self.attributeDefinitions = []
         for definition in Rules.attributeDefinitions:
@@ -614,16 +616,19 @@ class WorldModel(QAbstractTableModel):
 ##        world = Foundation.World()
 ##        world.randomize()
         self.insertRow(row)
-        #self.regenerateWorld(row)
 
     def regenerateWorld(self, row):
         #debug_log('Model: Randomizing existing world at row ' + str(row))
         modelIndex1 = self.index(row, 0)
         modelIndex2 = self.index(row, self.lastColumn)
 
-        # self.generateWorld is a reference to Rules.generateWorld
-        codes = self.getWorldStats()
-        descriptions = self.getWorldDescriptions(codes)
+        # Try new world generation, if that doesn't work fall back to the old way
+        try:
+            codes = self.getWorldStats()
+            descriptions = self.getWorldDescriptions(codes)
+        except:
+            codes, descriptions = self.generateWorld()
+        
         if len(codes) != len(descriptions):
             debug_log('Critical error in worlds model - description and codes lists from rules are different lengths!')
         self.worlds[row].reconfigure(codes)
