@@ -76,7 +76,7 @@ def getWorldStats():
     # while normalising out of range values.
     def numberToCode(number):
         if number < 0: number = 0
-        elif number > 5: number = 5
+        elif number > 23: number = 23
         
         return codes[number]
 
