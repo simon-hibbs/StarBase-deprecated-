@@ -4,29 +4,29 @@
 
 starport_data = \
      {"Name": "Starport",
-     "Codes": ['A', 'B', 'C', 'D', 'E', 'X'],
+      "Codes": ['X', 'E', 'D', 'C', 'B', 'A'],
      "Code Data": \
-         {"A": {"Label": "Starport",
-                "Description": "A full starport with many landing and docking sites. " +\
-                "Includes a shipyard capable of building and overhauling any kind of spacecraft, " +\
-                "including ships with interstellar capability."},
-          "B": {"Label": "Spaceport",
-                "Description": "Comprehensive landing and docking facilities. " +\
-                "Includes a shipyard capable of constructing and overhauling in-sytem spacecraft. " +\
+         {"X": {"Label": "None",
+                "Description": "No facilities for landing spacecraft are available." +\
+                ""},
+          "E": {"Label": "Landing Pad",
+                "Description": "Basic landing area and shelter only." +\
+                ""},
+          "D": {"Label": "Basic Facility",
+                "Description": "Only basic landing and service facilities are available." +\
                 ""},
           "C": {"Label": "Small Spaceport",
                 "Description": "Comprehensive landing and docking facilities, " +\
                 "suitable for routine operations. No shipyard and only basic maintenance " +\
                 "facilities are available."},
-          "D": {"Label": "Basic Facility",
-                "Description": "Only basic landing and service facilities are available." +\
+          "B": {"Label": "Spaceport",
+                "Description": "Comprehensive landing and docking facilities. " +\
+                "Includes a shipyard capable of constructing and overhauling in-sytem spacecraft. " +\
                 ""},
-          "E": {"Label": "Landing Pad",
-                "Description": "Basic landing area and shelter only." +\
-                ""},
-          "X": {"Label": "None",
-                "Description": "No facilities for landing spacecraft are available." +\
-                ""}
+          "A": {"Label": "Starport",
+                "Description": "A full starport with many landing and docking sites. " +\
+                "Includes a shipyard capable of building and overhauling any kind of spacecraft, " +\
+                "including ships with interstellar capability."}
           }
       }
 

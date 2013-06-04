@@ -11,7 +11,7 @@ import py2exe
 
 
 setup(name='StarBase',
-      version='0.23',
+      version='0.24',
       author='Simon D. Hibbs',
       windows=[{'script' : 'Starbase.pyw'}],
       options={'py2exe' : {'bundle_files' : '1',
