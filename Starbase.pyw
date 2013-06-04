@@ -796,8 +796,10 @@ class MainWindow(QtGui.QMainWindow):
         ret = saveDialog.exec_()
         if ret == QtGui.QMessageBox.Save:
             self.save()
+            log.debug_log('If built using PySide it takes a while to exit, be patient.')
             event.accept()
         elif ret == QtGui.QMessageBox.Discard:
+            log.debug_log('If built using PySide it takes a while to exit, be patient.')
             event.accept()
         elif ret == QtGui.QMessageBox.Cancel:
             event.ignore()

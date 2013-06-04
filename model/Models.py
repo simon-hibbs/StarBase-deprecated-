@@ -1143,12 +1143,17 @@ class WorldModel(QAbstractTableModel):
             reader.next()      # Skip header line
             for line in reader:
                 #print line
+                w_name = line[0]
+                w_col = line[1]
+                w_row = line[2]
+                w_allegiance = line[3]
+                w_attributes = line[4:]
                 world = Foundation.World(
-                    name=line[0],
-                    x=line[1],
-                    y=line[2],
-                    allegiance=line[3],
-                    attributes=line[4:]
+                    name=w_name,
+                    x=w_col,
+                    y=w_row,
+                    allegiance=w_allegiance,
+                    attributes=w_attributes
                     )
 ##                world = Foundation.World(
 ##                    name=line['World Name'],
@@ -1201,6 +1206,11 @@ class WorldModel(QAbstractTableModel):
                 self.network_model.addLinks(link_data)
                 debug_log("WorldModel: Links Added")
                 #self.network_model.graph.add_edges_from(pickle.load(link_file))
+
+        for world in self.worlds:
+            # make sure there is a node for every world
+            # World that already have nodes will not be altered.
+            self.network_model.addNode((world.col, world.row))
 
         # Check World Link Nodes
 ##        count = 0

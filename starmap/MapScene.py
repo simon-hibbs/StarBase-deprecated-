@@ -14,7 +14,7 @@ from model import Models
 from starmap import MapGlyphs
 from starmap import MapGrid
 from starmap import AddLabel
-from forms import WorldEditor, InterWorldLinkEditor
+from forms import WorldEditor, InterWorldLinkEditor, WorldGroupEditor
 from reports import PreviewMap
 from reports import WorldReport
 #from reports import SubsectorReport
@@ -25,75 +25,7 @@ CELLS = 1
 SUBSECTORS = 2
 SECTORS = 3
 
-## Deprecated
-##class RegionManager(QtGui.QDialog):
-##    def __init__(self, world_model, cell_list, parent=None):
-##        super(UpdateRegionDialog, self).__init__(parent)
-##        debug_log('Started Region Manager Dialog')
-##        self.setAttribute(Qt.WA_DeleteOnClose)
-##        self.setWindowTitle("Region Manager")
-##        self.model = world_model
-##        self.cell_list = cell_list
-##
-##        self.vlayout = QtGui.QVBoxLayout()
-##        self.vlayout.addWidget(QtGui.QLabel('Select an existing region, or enter the name of a new region to create.'))
-##        
-##        self.line_edit = QtGui.QLineEdit(self)
-##        self.line_edit.setMaxLength(20)
-##        self.vlayout.addWidget(self.line_edit)
-##
-##        self.list_widget = QtGui.QListWidget(self)
-##        for region_name in self.model.hexRegionNames:
-##            if region_name != 'None':
-##                self.list_widget.addItem(region_name)
-##        self.vlayout.addWidget(self.list_widget)
-##
-##        self.hlayout = QtGui.QHBoxLayout()
-##        self.ok_button = QtGui.QPushButton('Ok')
-##        self.hlayout.addWidget(self.ok_button)
-##        self.cancel_button = QtGui.QPushButton('Cancel')
-##        self.hlayout.addWidget(self.cancel_button)
-##
-##        self.vlayout.addLayout(self.hlayout)
-##
-##        self.list_widget.itemSelectionChanged.connect(self.regionSelectionChanged)
-##        self.ok_button.clicked.connect(self.okClicked)
-##        self.cancel_button.clicked.connect(self.cancelClicked)
-##
-##
-##    def addNewHexRegion(self, region_name, cell_list):
-##        self.model.addNewHexRegion(region_name)
-##        self.updateHexRegionName(region_name, cell_list)
-##
-##
-##    def updateHexRegionName(self, region_name, cell_list):
-##        if self.selectionType == 'Hexes':
-##            cell_list = []
-##            for cell in self.selectedItems():
-##                cell_list.append(cell)
-##
-##        coord_list = []
-##        for cell in cell_list:
-##            coord_list.append((cell.col, cell.row))
-##        self.model.updateHexRegionName(region_name, coord_list)
-##
-##
-##    def regionSelectionChanged(self):
-##        items = self.list_widget.selectedItems()
-##        if len(items) != 1:
-##            debug_log('UpdateRegionDialog: Number of selected items in region list not 1')
-##        elif items[0].text() != '' and len(items[0].text()) > 0:
-##            self.line_edit.setText(items[0].text())
-##
-##    def okClicked(self):
-##        region_name = self.line_edit.text()
-##        if region_name in self.model.hexRegionNames:
-##            self.updateHexRegionName(region_name, self.cell_list)
-##        else:
-##            self.addNewHexRegion(region_name, self.cell_list)
-##        
-##    def cancelClicked(self):
-##        self.close()
+
 
 
 
@@ -552,6 +484,7 @@ class MapScene(QtGui.QGraphicsScene):
                 removeLink = False
 ##                addLink = False
                 editLinks = False
+                editWorldGroup = False
 
                 if len(pmi_list) == 2 and len(cell_list) == 2:
                     world1 = self.model.getWorld(pmi_list[0])
@@ -579,6 +512,7 @@ class MapScene(QtGui.QGraphicsScene):
                     reGenerateWorlds = menu.addAction('Re-Generate Selected Worlds')
                     reGenerateRegion = menu.addAction('Re-Generate Region')
                     statistics = menu.addAction('Statistics')
+                    editWorldGroup = menu.addAction('Edit World Group')
 
                 createHexRegion = menu.addAction('Create Hex Region')
                 menu.addMenu(region_menu)
@@ -625,6 +559,20 @@ class MapScene(QtGui.QGraphicsScene):
                     self.dialog.raise_()
                     self.dialog.activateWindow()
 
+                elif selectedAction == editWorldGroup:
+                    names = "Selected worlds: " + str(len(pmi_list))
+                    myView = self.views()[0]
+                    self.dialog = WorldGroupEditor.WorldGroupEditDialog(
+                                             pmi_list,
+                                             len(cell_list),
+                                             names,
+                                             parent=myView)
+                    self.dialog.show()
+                    self.dialog.raise_()
+                    self.dialog.activateWindow()
+
+
+
                 elif selectedAction == createHexRegion:
                     region_name, ok = QtGui.QInputDialog.getText(QtGui.QWidget(), 'Crate New Hex Region',
                                                                 'New Region Name:',
@@ -653,6 +601,7 @@ class MapScene(QtGui.QGraphicsScene):
             populateSector = False
             deleteWorlds = False
             statistics = False
+            editWorldGroup = False
 ##            importSec = False
             
             if len(sector_list) == 1:
@@ -661,12 +610,14 @@ class MapScene(QtGui.QGraphicsScene):
                 populateSector = menu.addAction('Generate Sector')
                 deleteWorlds = menu.addAction('Delete Worlds')
                 statistics = menu.addAction('Show Statistics')
+                editWorldGroup = menu.addAction('Edit World Group')
 ##                importSEC = menu.addAction('Import SEC file')
 
             elif len(sector_list) > 1:
                 populateSector = menu.addAction('Generate Sectors')
                 deleteWorlds = menu.addAction('Delete Worlds')
                 statistics = menu.addAction('Show Statistics')
+                editWorldGroup = menu.addAction('Edit World Group')
                 
             selectedAction = menu.exec_(event.screenPos())
 
@@ -744,6 +695,32 @@ class MapScene(QtGui.QGraphicsScene):
                     self.dialog.raise_()
                     self.dialog.activateWindow()
 
+            elif selectedAction == editWorldGroup:
+                cell_list = []
+                names = ""
+                for sector in sector_list:
+                    cell_list = cell_list + sector.cells
+                    if names == "":
+                        prefix = "Sector: "
+                        names = sector.name
+                    else:
+                        prefix = "Sectors: "
+                        names += ", " + sector.name
+                names = prefix + names
+                pmi_list = []
+                for cell in cell_list:
+                    pmi = self.model.getPmiAt(cell.col, cell.row)
+                    if pmi != None:
+                        pmi_list.append(pmi)
+                myView = self.views()[0]
+                self.dialog = WorldGroupEditor.WorldGroupEditDialog(
+                                         pmi_list,
+                                         len(cell_list),
+                                         names,
+                                         parent=myView)
+                self.dialog.show()
+                self.dialog.raise_()
+                self.dialog.activateWindow()
 
 ##            elif selectedAction == importSEC:
 ##                sector = sector_list[0]
@@ -771,6 +748,7 @@ class MapScene(QtGui.QGraphicsScene):
             populateSubsector = False
             deleteWorlds = False
             statistics = False
+            editWorldGroup = False
 
             if len(subsector_list) == 1:
                 renameSubsector = menu.addAction('Rename Subsector')
@@ -779,11 +757,13 @@ class MapScene(QtGui.QGraphicsScene):
                 populateSubsector = menu.addAction('Generate Subsector')
                 deleteWorlds = menu.addAction('Delete Worlds')
                 statistics = menu.addAction('Show Statistics')
+                editWorldGroup = menu.addAction('Edit World Group')
 
             elif len(subsector_list) > 1:
                 populateSubsector = menu.addAction('Generate Subsector')
                 deleteWorlds = menu.addAction('Delete Worlds')
                 statistics = menu.addAction('Show Statistics')
+                editWorldGroup = menu.addAction('Edit World Group')
                 
             selectedAction = menu.exec_(event.screenPos())
 
@@ -812,27 +792,6 @@ class MapScene(QtGui.QGraphicsScene):
                 self.dialog.show()
                 self.dialog.raise_()
                 self.dialog.activateWindow()
-
-##            elif selectedAction == subsectorReport:
-##                pmi_list = []
-##                for subsector in subsector_list:
-##                     for cell in subsector.cells:
-##                        x = cell.col
-##                        y = cell.row
-##                        pmi = self.grid.worldPmiAt(x, y)
-##                        if pmi != None:
-##                            pmi_list.append(pmi)
-##                myView = self.views()[0]
-##                col = subsector_list[0].subsectorCol
-##                row = subsector_list[0].subsectorRow
-##                self.dialog = SubsectorReport.SubsectorReportDialog(
-##                                    subsector_glyph=subsector_list[0],
-##                                    pmi_list=pmi_list,
-##                                    model=self.model,
-##                                    parent=myView)
-##                self.dialog.show()
-##                self.dialog.raise_()
-##                self.dialog.activateWindow()
 
             
             elif selectedAction == populateSubsector:
@@ -873,6 +832,33 @@ class MapScene(QtGui.QGraphicsScene):
                         pmi_list.append(pmi)
                 myView = self.views()[0]
                 self.dialog = StatisticsDialog.StatisticsDialog(
+                                         pmi_list,
+                                         len(cell_list),
+                                         names,
+                                         parent=myView)
+                self.dialog.show()
+                self.dialog.raise_()
+                self.dialog.activateWindow()
+
+            elif selectedAction == editWorldGroup:
+                cell_list = []
+                names = ""
+                for subsector in subsector_list:
+                    cell_list = cell_list + subsector.cells
+                    if names == "":
+                        prefix = "Subsector: "
+                        names = subsector.name
+                    else:
+                        prefix = "Subsectors: "
+                        names += ", " + subsector.name
+                names = prefix + names
+                pmi_list = []
+                for cell in cell_list:
+                    pmi = self.model.getPmiAt(cell.col, cell.row)
+                    if pmi != None:
+                        pmi_list.append(pmi)
+                myView = self.views()[0]
+                self.dialog = WorldGroupEditor.WorldGroupEditDialog(
                                          pmi_list,
                                          len(cell_list),
                                          names,

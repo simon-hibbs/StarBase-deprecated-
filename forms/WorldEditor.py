@@ -1,5 +1,5 @@
-from PySide.QtCore import *
 # Copyright 2013 Simon Dominic Hibbs
+from PySide.QtCore import *
 from PySide.QtGui import *
 from model import Models
 from model import Foundation
@@ -110,8 +110,6 @@ class WorldDataFrame(QFrame):
         super(WorldDataFrame, self).__init__(parent)
         self.pmi = pmi
         w = self.pmi.model().getWorld(self.pmi)
-        print "WorldDataFrame:", w.attributes
-        print "pmi row:", self.pmi.row()
         #self.setFrameShape(QFrame.StyledPanel)
 
         self.nameLineEdit = WorldNameLineEdit()
