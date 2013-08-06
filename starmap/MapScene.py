@@ -602,7 +602,7 @@ class MapScene(QtGui.QGraphicsScene):
             deleteWorlds = False
             statistics = False
             editWorldGroup = False
-##            importSec = False
+            importSec = False
             
             if len(sector_list) == 1:
                 renameSector = menu.addAction('Rename Sector')
@@ -611,7 +611,7 @@ class MapScene(QtGui.QGraphicsScene):
                 deleteWorlds = menu.addAction('Delete Worlds')
                 statistics = menu.addAction('Show Statistics')
                 editWorldGroup = menu.addAction('Edit World Group')
-##                importSEC = menu.addAction('Import SEC file')
+                importSEC = menu.addAction('Import SEC file')
 
             elif len(sector_list) > 1:
                 populateSector = menu.addAction('Generate Sectors')
@@ -722,18 +722,18 @@ class MapScene(QtGui.QGraphicsScene):
                 self.dialog.raise_()
                 self.dialog.activateWindow()
 
-##            elif selectedAction == importSEC:
-##                sector = sector_list[0]
-##                myView = self.views()[0]
-##                default_path = self.model.project_path
-##                filename = QtGui.QFileDialog.getOpenFileName(myView,
-##                                                'Open .SEC file',
-##                                                default_path,
-##                                                'SEC Files (*.SEC)')
-##                self.model.importSEC(filename,
-##                                     sector.sectorCol,
-##                                     sector.sectorRow)
-##                debug_log('SEC import complete')
+            elif selectedAction == importSEC:
+                sector = sector_list[0]
+                myView = self.views()[0]
+                default_path = self.model.project_path
+                filename, ok = QtGui.QFileDialog.getOpenFileName(myView,
+                                                'Open .SEC file',
+                                                default_path,
+                                                'SEC Files (*.SEC)')
+                self.model.importSEC(filename,
+                                     sector.sectorCol,
+                                     sector.sectorRow)
+                debug_log('SEC import complete')
 
 
         elif self.selectionType == 'Subsectors':
@@ -902,6 +902,7 @@ class WorldItemView(QtGui.QAbstractItemView):
         self.my_model = model
         self.scene = MapScene(self.my_model)
         self.resetWorlds()
+        self.my_model.subsectorRenamed.connect(self.subsectorRenamed)
         #self.linkNetworkView = LinkNetworkItemView(self.my_model.linkNetworks, self.scene)
 
     def dataChanged(self, topLeft, bottomRight):
@@ -926,4 +927,9 @@ class WorldItemView(QtGui.QAbstractItemView):
         last_row = self.my_model.rowCount() - 1
         self.rowsInserted(None, 0, last_row)
 
+    def subsectorRenamed(self, row):
+        subsector = self.my_model.subsectors[row]
+        self.scene.setSubsectorData(subsector.name,
+                                    subsector.subsectorCol,
+                                    subsector.subsectorRow)
 

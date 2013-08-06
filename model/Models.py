@@ -70,6 +70,7 @@ class WorldModel(QAbstractTableModel):
 
     regionAdded = Signal(str)
     regionDisbanded = Signal(int)
+    subsectorRenamed = Signal(int)
 
     def __init__(self):
         super(WorldModel, self).__init__()
@@ -367,13 +368,14 @@ class WorldModel(QAbstractTableModel):
             return 'Non-alligned'         
 
     def renameSubsector(self, col, row, text):
-        #Setting the name in the map needs to be done seperately
-        for subsector in self.subsectors:
+        #Setting the name in the map needs to be done separately
+        for sub_list_row, subsector in enumerate(self.subsectors):
             if subsector.subsectorCol == col and subsector.subsectorRow == row:
                 subsector.name = text
+                self.subsectorRenamed.emit(sub_list_row)
 
     def renameSector(self, col, row, text):
-        #Setting the name in the map needs to be done seperately
+        #Setting the name in the map needs to be done separately
         for sector in self.sectors:
             if sector.sectorCol == col and sector.sectorRow == row:
                 sector.name = text
@@ -1446,15 +1448,14 @@ class WorldModel(QAbstractTableModel):
                         debug_log('Setting subsector name: ' + sub_name)
                         debug_log(' subsector column: ' + str(sub_col))
                         debug_log(' subsector row:    ' + str(sub_row))
-                        self.subsectors.append(Foundation.Subsector(
-                            sub_name, sub_col, sub_row))
+                        self.renameSubsector(sub_col, sub_row, sub_name)
                     else:
                         debug_log('Sector import error, bad subsector: ' + line)
 
                 elif line[0] == '+' and line[3] == ' ':
                     #Add allegiance config, if not already present
                     new_code = line[1:3]
-                    new_name = line[4:]
+                    new_name = line[4:].rstrip()
                     if new_code not in Foundation.allegiance_codes:
                         debug_log('New allegiance: '
                                   + new_code + ' '
@@ -1470,11 +1471,13 @@ class WorldModel(QAbstractTableModel):
                     world_name = line[0:18].rstrip()
                     column = base_col + int(line[19:21]) - 1
                     row = base_row + int(line[21:23]) - 1
+                    trade_string = line[36:50]
                     trade_list = (line[36:38], line[39:41], line[42:44],
                                   line[45:47], line[48:50])
                     hasNavy, hasScout = False, False
-                    if line[34] in base_codes:
-                        hasNavy, hasScout = base_codes[line[34]]
+                    base_string = line[34]
+                    if base_string in base_codes:
+                        hasNavy, hasScout = base_codes[base_string]
                     hasResearch = 'Rs' in trade_list
                     travel_zone = travel_zone_lookup[line[52]]
                     pop_multiplier = int(line[54])
@@ -1485,59 +1488,94 @@ class WorldModel(QAbstractTableModel):
                     else:
                         hasGasGiant = False
                     allegiance_code = line[58:60]
+                    star_data = line[61:]
 
-                    world = Foundation.World(
-                        name=world_name,
-                        x=column,
-                        y=row,
-                        port=line[24],
-                        size=line[25],
-                        atmosphere=line[26],
-                        hydrographics=line[27],
-                        population=line[28],
-                        government=line[29],
-                        law_level=line[30],
-                        tech_level=line[32],
-                        gas=hasGasGiant,
-                        travel_code=travel_zone,
-                        navy=hasNavy,
-                        scout=hasScout,
-                        research=hasResearch,
-                        tas=False,
-                        consulate=False,
-                        pirate=False,
-                        allegiance=allegiance_code,
-                        port_txt='',
-                        size_txt='',
-                        atmo_txt='',
-                        hydro_txt='',
-                        pop_txt='',
-                        gov_txt='',
-                        law_txt='',
-                        tech_txt='',
-                        hydro_pc=None,
-                        Ag='Ag' in trade_list,
-                        As='As' in trade_list,
-                        Ba='Ba' in trade_list,
-                        De='De' in trade_list,
-                        Fl='Fl' in trade_list,
-                        Ga='Ga' in trade_list,
-                        Hi='Hi' in trade_list,
-                        Ht='Ht' in trade_list,
-                        IC='IC' in trade_list,
-                        In='In' in trade_list,
-                        Lo='Lo' in trade_list,
-                        Lt='Lt' in trade_list,
-                        Na='Na' in trade_list,
-                        NI='NI' in trade_list,
-                        Po='Po' in trade_list,
-                        Ri='Ri' in trade_list,
-                        Va='Va' in trade_list,
-                        Wa='Wa' in trade_list)
+                    port=line[24]
+                    size=line[25]
+                    atmosphere=line[26]
+                    hydrographics=line[27]
+                    population=line[28]
+                    government=line[29]
+                    law_level=line[30]
+                    tech_level=line[32]
+                    gas=hasGasGiant
+                    travel_code=travel_zone
+                    navy=hasNavy
+                    scout=hasScout
+                    research=hasResearch
+                    tas=False
+                    consulate=False
+                    pirate=False
+                    allegiance=allegiance_code
+                    port_txt=''
+                    size_txt=''
+                    atmo_txt=''
+                    hydro_txt=''
+                    pop_txt=''
+                    gov_txt=''
+                    law_txt=''
+                    tech_txt=''
+                    hydro_pc=None
+                    Ag='Ag' in trade_list
+                    As='As' in trade_list
+                    Ba='Ba' in trade_list
+                    De='De' in trade_list
+                    Fl='Fl' in trade_list
+                    Ga='Ga' in trade_list
+                    Hi='Hi' in trade_list
+                    Ht='Ht' in trade_list
+                    IC='IC' in trade_list
+                    In='In' in trade_list
+                    Lo='Lo' in trade_list
+                    Lt='Lt' in trade_list
+                    Na='Na' in trade_list
+                    NI='NI' in trade_list
+                    Po='Po' in trade_list
+                    Ri='Ri' in trade_list
+                    Va='Va' in trade_list
+                    Wa='Wa' in trade_list
 
+                    attribute_codes = [port,
+                                       size,
+                                       atmosphere,
+                                       hydrographics,
+                                       population,
+                                       government,
+                                       law_level,
+                                       tech_level,
+                                       '0']
+                    
+                    system_text = "Bases:".ljust(15) + base_string + "\n" +\
+                                  "Trade:".ljust(15) + trade_string + "\n" +\
+                                  "Asteroids:".ljust(15) + 'Unknown' + "\n" +\
+                                  "Gas Giant(s):".ljust(15) + str(num_gas_giants) + "\n" +\
+                                  "Star Data:".ljust(15) + star_data + "\n"
+
+
+                    # Now we have the data, create a new World object
+                    world = Foundation.World(name=world_name,
+                                             x=column,
+                                             y=row,
+                                             allegiance=allegiance_code,
+                                             attributes=attribute_codes
+                                             )
+                    
+                    # Add the new world to self.worlds
                     new_row = len(self.worlds)
+                    
                     self.beginInsertRows(QModelIndex(), new_row, new_row)
                     self.worlds.append(world)
                     self.endInsertRows()
-                    debug_log(self.getUWP(len(self.worlds) - 1))
+                    
+                    # Now add the custom text for the system data
+                    self.storeTextData(self.worlds[new_row].name,
+                                   self.attributeDefinitions[8].name + '.txt',
+                                   system_text)
+
+                    modelIndex1 = self.index(row, 0)
+                    modelIndex2 = self.index(row, self.lastColumn)
+                    self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"),
+                      modelIndex1, modelIndex2)
+                    #debug_log(self.getUWP(len(self.worlds) - 1))
         self.dirty = True
+
