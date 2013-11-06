@@ -64,17 +64,17 @@ attributeDefinitions = [starport_data,
                         system_data]
 
 
-# The function returns a list of attribute codes, which match the attributes
-# in the attributeDefinitions list. The two lists must be the same length and
-# the attribute definitions must contain definitions for the codes returned
-# by this function.
 def getWorldStats():
-    
+    """The function returns a list of attribute codes, which match the attributes
+       in the attributeDefinitions list. The two lists must be the same length and
+       the attribute definitions must contain definitions for the codes returned
+       by this function."""
     dm = 0
 
-    # Convenience function to turn random numbers into code strings,
-    # while normalising out of range values.
+
     def numberToCode(number):
+        """Convenience function to turn random numbers into code strings,
+           while normalising out of range values."""
         if number < 0: number = 0
         elif number > 23: number = 23
         
@@ -189,13 +189,187 @@ def getWorldStats():
     return stats
 
 
-# This function returns a list of attribute descriptions. This alloows for
-# custom description generation for each attribute, perhaps based on the
-# values of other attributes. In this implementation, trade codes are
-# generated based on the values of various attributes.
-# Individual descriptions may be empty dtrings, inwhich case the application
-# uses the default description from the attribute definition.
+# Given a set of world stats, calculate and return a set of boolean flags
+def getWorldFlags(world_stats):
+
+    starport, size, atmosphere, hydrographics, population, government, law_level, tech_level, system_data = world_stats
+    
+    # Trade code generation
+    trade_list = []
+    flags = []
+
+    if atmosphere in ['4', '5', '6', '7', '8', '9'] \
+       and hydrographics in ['4', '5', '6', '7', '8'] \
+       and population in ['5', '6', '7']:
+        trade_list.append('Ag')
+        tradeAg = True
+    else:
+        tradeAg = False
+    flags.append(['Ag', tradeAg])
+
+    if size == '0' \
+       and atmosphere == '0' \
+       and hydrographics == '0':
+        trade_list.append('As')
+        tradeAs = True
+    else:
+        tradeAs = False
+    flags.append(['As', tradeAs])
+
+    if population == '0' \
+       and government == '0' \
+       and law_level == '0':
+        trade_list.append('Ba')
+        tradeBa = True
+    else:
+        tradeBa = False
+    flags.append(['Ba', tradeBa])
+
+    if codes.index(atmosphere) >= 2 \
+       and hydrographics == '0':
+        trade_list.append('De')
+        tradeDe = True
+    else:
+        tradeDe = False
+    flags.append(['De', tradeDe])
+
+    if codes.index(atmosphere) >= 10 \
+       and codes.index(hydrographics) >= 1:
+        trade_list.append('Fl')
+        tradeFl = True
+    else:
+        tradeFl = False
+    flags.append(['Fl', tradeFl])
+
+    if atmosphere in ['4', '5', '6', '7', '8', '9'] \
+       and hydrographics in  ['4', '5', '6', '7', '8']:
+        trade_list.append('Ga')
+        tradeGa = True
+    else:
+        tradeGa = False
+    flags.append(['Ga', tradeGa])
+
+    if codes.index(population) >= 9:
+        trade_list.append('Hi')
+        tradeHi = True
+    else:
+        tradeHi = False
+    flags.append(['Hi', tradeHi])
+
+    if codes.index(tech_level) >= 12:
+        trade_list.append('Ht')
+        tradeHt = True
+    else:
+        tradeHt = False
+    flags.append(['Ht', tradeHt])
+
+    if atmosphere in ['0', '1'] \
+       and codes.index(hydrographics) >= 1:
+        trade_list.append('IC')
+        tradeIC = True
+    else:
+        tradeIC = False
+    flags.append(['IC', tradeIC])
+
+    if atmosphere in ['0', '1', '2', '4', '7', '9'] \
+       and codes.index(population) >= 9:
+        trade_list.append('In')
+        tradeIn = True
+    else:
+        tradeIn = False
+    flags.append(['In', tradeIn])
+
+    if codes.index(tech_level) <= 5:
+        trade_list.append('Lt')
+        tradeLt = True
+    else:
+        tradeLt = False
+    flags.append(['Lt', tradeLt])
+
+    if atmosphere in ['0', '1', '2', '3'] \
+       and hydrographics in ['0', '1', '2', '3'] \
+       and codes.index(population) >= 6:
+        trade_list.append('Na')
+        tradeNa = True
+    else:
+        tradeNa = False
+    flags.append(['Na', tradeNa])
+
+    if population in ['4', '5', '6']:
+        trade_list.append('NI')
+        tradeNI = True
+    else:
+        tradeNI = False
+    flags.append(['NI', tradeNI])
+
+    if atmosphere in ['2', '3', '4', '5'] \
+       and hydrographics in ['0', '1', '2', '3']:
+        trade_list.append('Po')
+        tradePo = True
+    else:
+        tradePo = False
+    flags.append(['Po', tradePo])
+
+    if atmosphere in ['6', '8'] \
+       and population in ['6', '7', '8']:
+        trade_list.append('Ri')
+        tradeRi = True
+    else:
+        tradeRi = False
+    flags.append(['Ri', tradeRi])
+
+    if atmosphere == '0':
+        trade_list.append('Va')
+        tradeVa = True
+    else:
+        tradeVa = False
+    flags.append(['Va', tradeVa])
+
+    if hydrographics == 'A':
+        trade_list.append('Wa')
+        tradeWa = True
+    else:
+        tradeWa = False
+    flags.append(['Wa', tradeWa])
+
+    trade_codes = ' '.join(trade_list)
+
+
+    if (d6() + d6()) >= 10:
+        gas_giant = False
+    else:
+        gas_giant = True
+    flags.append(['GG', gas_giant])
+
+    if (d6() + d6()) >= 8:
+        belts = False
+    else:
+        belts = True
+    flags.append(['Asteroids', belts])
+
+
+    if gas_giant:
+        GG = 'G'
+    else:
+        GG = ' '
+
+    if belts:
+        AB = 'A'
+    else:
+        AB = ' '
+    
+    summary = '{tc}   {asteroids} {gas}'.format(tc=trade_codes, asteroids=AB, gas=GG)
+    
+    return flags, summary
+
+
 def getWorldDescriptions(world_stats):
+    """This function returns a list of attribute descriptions. This alloows for
+       custom description generation for each attribute, perhaps based on the
+       values of other attributes. In this implementation, trade codes are
+       generated based on the values of various attributes.
+       Individual descriptions may be empty strings, inwhich case the application
+       uses the default description from the attribute definition."""
 
     starport, size, atmosphere, hydrographics, population, government, law_level, tech_level, system_data = world_stats
 

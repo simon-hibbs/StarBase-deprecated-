@@ -416,6 +416,11 @@ def getWorldStats():
     return codes
 
 
+# Given a set of world stats, calculate and return a set of boolean flags
+def getWorldFlags(world_stats):
+    return [], ''
+
+
 # This function returns a list of attribute descriptions. This alloows for
 # custom description generation for each attribute, perhaps based on the
 # values of other attributes.

@@ -167,8 +167,8 @@ class World(object):
         self.row = int(y)
 
         self.allegiance = Allegiance(str(allegiance))
-
         self.attributes = attributes
+        self.flags = []
 
     def reconfigure(self, attributes):
         self.attributes = attributes
