@@ -163,8 +163,10 @@ class WorldModel(QAbstractTableModel):
             self.getWorldStats = Rules.getWorldStats
             self.getWorldDescriptions = Rules.getWorldDescriptions
             self.getWorldFlags = Rules.getWorldFlags
+            info_log('Model successfuly mapped getWorldStats, getWorldDescriptions, getWorldFlags')
         except:
-            self.generateWorld = Rules.generateWorld
+            #self.generateWorld = Rules.generateWorld
+            info_log('Model failed back to old API, mapped generateWorld')
 
         self.attributeDefinitions = []
         for definition in Rules.attributeDefinitions:
@@ -626,13 +628,15 @@ class WorldModel(QAbstractTableModel):
         modelIndex2 = self.index(row, self.lastColumn)
 
         # Try new world generation, if that doesn't work fall back to the old way
-        try:
-            codes = self.getWorldStats()
-            flags = self.getWorldFlags(codes)
-            descriptions = self.getWorldDescriptions(codes)
-        except:
-            codes, descriptions = self.generateWorld()
-            flags = []
+        #try:
+        info_log('Attempting new api world generation')
+        codes = self.getWorldStats()
+        flags = self.getWorldFlags(codes)
+        descriptions = self.getWorldDescriptions(codes)
+        #except:
+            #codes, descriptions = self.generateWorld()
+            #flags = []
+            #info_log('Exception generating new world!')
         
         if len(codes) != len(descriptions):
             debug_log('Critical error in worlds model - description and codes lists from rules are different lengths!')
