@@ -31,10 +31,10 @@ https://github.com/simon-hibbs/StarBase
 In order to run StarBase you will need a copy of the Python programming language and several third party modules for Python. These are:
 
 Python 2.7
-Pywin32
+Pywin32 (Windows only)
 PySide-1.1 -  Qt GUI framework bindings for Python
-NetworkX – a network graph library
+NetworkX â€“ a network graph library
 
-Optionally, if you wish to build the application as a Windows executable yourself, you will also need:
+Starbase is tested on Linux and Windows. Optionally if you wish to build the application as a Windows executable yourself, you will also need:
 
 Py2exe
